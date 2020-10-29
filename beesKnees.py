@@ -2,6 +2,7 @@ import webbrowser as wb
 import time
 import string
 import random
+import os
 
 from pymouse import PyMouse
 from pykeyboard import PyKeyboard
@@ -55,10 +56,11 @@ def loadWords(level):
     Output: A list of words to be used for the round
 
     """
-    WORDLIST1 = "/Users/adityakuroodi/Desktop/theBee/words.txt"    # 6th grade
-    WORDLIST2 = "/Users/adityakuroodi/Desktop/theBee/words2.txt"    # 7th
-    WORDLIST3 = "/Users/adityakuroodi/Desktop/theBee/words3.txt"    # high school
-    WORDLIST4 = "/Users/adityakuroodi/Desktop/theBee/words4txt"     # death
+    cwd = os.getcwd() + "/"
+    WORDLIST1 = cwd + "words.txt"    # 6th grade
+    WORDLIST2 = cwd + "words2.txt"    # 7th
+    WORDLIST3 = cwd + "words3.txt"    # high school
+    WORDLIST4 = cwd + "words4txt"     # death
     
     levelmap = {1: WORDLIST1, 2: WORDLIST2, 3: WORDLIST3, 4: WORDLIST4}   # maps level to different text files to generate the right word list
 
@@ -81,7 +83,7 @@ def lookupWord(word):
     
     """    
     print("Looking up word...\n")
-    #deleteTab() # closes last open tab
+    time.sleep(2)
 
     # Open new tab with word
     dictURL = "https://dictionary.com/browse/"
@@ -100,6 +102,7 @@ def playRound(level, words, arena):
     for player in arena.players.keys():
         print(player.getName() + " you're up \n")
         word = random.choice(words)
+        print("Your word is: ", word)
         lookupWord(word)
         x = input("Guessed correctly? [Y/N]\n")
         if x.lower() == 'n':
@@ -114,15 +117,22 @@ def playRound(level, words, arena):
 def runBee():
     # Setup the playing field by adding all the players to the Arena
     arena = Arena()
-    friends = ["Kuroodi", "Vikram", "Aahana"]
+    friends = []
+    getNames = True
+    while getNames:
+        y = input("Please enter the names of friends who want to play theBee, or type DONE when finished:\n")
+        if y.upper() == "DONE": getNames = False
+        else: friends.append(y)
+    
     random.shuffle(friends)
     beeRound = 1
+    numRounds = 3
 
     for friend in friends:
         arena.addPlayer(Player(friend))
 
     # Each game will consist of 4 rounds, tibreakers occur after 4th round
-    while beeRound < 2:
+    while beeRound < numRounds:
         print("Start of round " + str(beeRound) + '\n')
 
         # Load appropriate word list for each round
